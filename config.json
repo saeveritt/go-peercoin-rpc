@@ -1,0 +1,5 @@
+{
+    "testnet": true,
+    "host": "localhost",
+    "port": 9904
+}
