@@ -78,7 +78,7 @@ func (c *Config) setUsernamePassword() {
 
 // get username from environment variable
 func GetUserName() (string, error) {
-	username := os.Getenv("GRPPC_USERNAME")
+	username := os.Getenv("PPC_RPCUSER")
 	if username == "" {
 		return username, ErrUsernameNotFound
 	}
@@ -87,7 +87,7 @@ func GetUserName() (string, error) {
 
 // get password from environment variable
 func GetPassword() (string, error) {
-	password := os.Getenv("GRPPC_PASSWORD")
+	password := os.Getenv("PPC_RPCPASSWORD")
 	if password == "" {
 		return password, ErrPasswordNotFound
 	}
