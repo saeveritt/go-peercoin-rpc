@@ -1,4 +1,5 @@
 # go-peercoin-rpc
+[![Go Report Card](https://goreportcard.com/badge/github.com/saeveritt/go-peercoin-rpc)](https://goreportcard.com/report/github.com/saeveritt/go-peercoin-rpc)
 ## Setup your environment variables
 
 First, ensure that both `PPC_RPCUSER` and `PPC_RPCPASSWORD` ENV variables exist
