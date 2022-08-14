@@ -12,7 +12,7 @@ import (
 	"github.com/saeveritt/go-peercoin-rpc/config"
 )
 
-// create a RPCRequest struct with json fields
+// RPCRequest struct with json fields
 type RPCRequest struct {
 	Jsonrpc string `json:"jsonrpc"`
 	Method  string `json:"method"`
@@ -20,7 +20,7 @@ type RPCRequest struct {
 	Id      int    `json:"id"`
 }
 
-// create a RPCResponse struct with json fields
+// RPCResponse struct with json fields
 type RPCResponse struct {
 	Jsonrpc string      `json:"jsonrpc"`
 	Result  interface{} `json:"result"`
@@ -28,26 +28,26 @@ type RPCResponse struct {
 	Id      int         `json:"id"`
 }
 
-// create RPCError struct with json fields
+// RPCError struct with json fields
 type RPCError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    string `json:"data"`
 }
 
-// create RPCNotification struct with json fields
+// RPCNotification struct with json fields
 type RPCNotification struct {
 	Jsonrpc string `json:"jsonrpc"`
 	Method  string `json:"method"`
 	Params  []byte `json:"params,omitempty"`
 }
 
-// create a BatchResponse struct with array of RPCResponse structs
+// BatchResponse struct with array of RPCResponse structs
 type BatchResponse struct {
 	Responses []RPCResponse `json:"responses"`
 }
 
-// create RPCClient struct with json fields
+// RPCClient struct with json fields
 type RPCClient struct {
 	Host            string
 	Port            int
@@ -58,8 +58,7 @@ type RPCClient struct {
 	idMutex         sync.Mutex
 }
 
-// create a NewRPCClient that accepts a Config and returns a RPCClient struct
-
+// NewRPCClient that accepts a Config and returns a RPCClient
 func NewRPCClient(config *config.Config) *RPCClient {
 	client := &RPCClient{
 		Host:            config.Host,
@@ -73,14 +72,14 @@ func NewRPCClient(config *config.Config) *RPCClient {
 	return client
 }
 
-// create a SetBasicAuth function for RPCClient that accepts a Config and sets a custom Authorization header with the username and password base64 encoded
+// SetBasicAuth function for RPCClient that accepts a Config and sets a custom Authorization header with the username and password base64 encoded
 func (client *RPCClient) SetBasicAuth(config *config.Config) {
 	//set authorization header with username and password base64 encoded
 	auth := config.Username + ":" + config.Password
 	client.customHeaders["Authorization"] = "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-// create NewRPCRequestObject that accepts a method and params and returns a RPCRequest struct
+// NewRPCRequestObject accepts a method and params and returns a RPCRequest
 func (client *RPCClient) NewRPCRequestObject(method string, params []byte) *RPCRequest {
 	// lock client id mutex
 	client.idMutex.Lock()
@@ -105,7 +104,7 @@ func (client *RPCClient) NewRPCRequestObject(method string, params []byte) *RPCR
 	return &rpcRequest
 }
 
-// create NewRPCNotificationObject that accepts a method and params and returns a RPCNotification struct
+// NewRPCNotificationObject that accepts a method and params and returns a RPCNotification struct
 func (client *RPCClient) NewRPCNotificationObject(method string, params []byte) *RPCNotification {
 	// set rpcNotification params to empty array if params is nil
 	if params == nil {
@@ -118,8 +117,8 @@ func (client *RPCClient) NewRPCNotificationObject(method string, params []byte) 
 	}
 }
 
-// create a new Call function for RPCClient that accepts a method string and params and returns a RPCResponse or error
-func (client *RPCClient) Call(method string, params []byte) (*RPCResponse, error) {
+// Call function for RPCClient that accepts a method string and params and returns a RPCResponse or error
+func (client *RPCClient) Call(method string, params []byte) ([]byte, error) {
 	// create http request with method and params
 	req, err := client.newRequest(false, method, params)
 	if err != nil {
@@ -130,21 +129,29 @@ func (client *RPCClient) Call(method string, params []byte) (*RPCResponse, error
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+
 	// create rpcResponse object from http response body
 	rpcResponse := new(RPCResponse)
 	decoder := json.NewDecoder(resp.Body)
+	decoder.UseNumber()
 	err = decoder.Decode(&rpcResponse)
 	if err != nil {
 		// log error and return error
 		log.Printf("Encountered an Error: %v\n", err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	result, err := json.Marshal(rpcResponse.Result)
+	if err != nil {
+		// log error and return error
+		log.Printf("Encountered an Error: %v\n", err)
+		return nil, err
+	}
 
-	return rpcResponse, nil
+	return result, nil
 }
 
-// create a new newRequest function for RPCClient that takes a notification bool, method string, and params and returns a http Request or error
+// newRequest function for RPCClient that takes a notification bool, method string, and params and returns a http Request or error
 func (client *RPCClient) newRequest(notification bool, method string, params []byte) (*http.Request, error) {
 	// create rpcRequest object to be either a RPCRequest or RPCNotification
 	var rpcRequest interface{}

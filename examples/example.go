@@ -17,12 +17,13 @@ func main() {
 	// Create a new jsonrpc client.
 	client := jsonrpc.NewRPCClient(config)
 	// Call the getblockchaininfo method.
-	resp, err := client.Call("getblockchaininfo", nil)
+	resp, err := client.GetBlockchainInfo()
 	if err != nil {
 		log.Printf("Encountered an Error: %v\n", err)
 		return
 	}
 	// Print the response.
 	log.Printf("Response: %v\n", resp)
+	log.Printf("GetChainWork: %v", resp.GetChainwork())
 
 }
