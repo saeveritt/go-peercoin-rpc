@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = ".;proto";
+
+
+message GetBlockVerboseTxResult {
+  string hash = 1;
+  int64 confirmations = 2;
+  int32 strippedsize = 3;
+  int32 size = 4;
+  int32 weight = 5;
+  int32 height = 6;
+  int32 version = 7;
+  string versionHex = 8;
+  string merkleroot = 9;
+  repeated Transaction tx = 10;
+  int64 time = 11;
+  int64 mediantime = 12;
+  uint32 nonce = 13;
+  string bits = 14;
+  double difficulty = 15;
+  string chainwork = 16;
+  int32 nTx = 17;
+  string previousblockhash = 18;
+  string nextblockhash = 19;
+}
+
+message Transaction {
+  string txid = 1;
+  string hash = 2;
+  int32 version = 3;
+  int32 size = 4;
+  int32 vsize = 5;
+  int32 weight = 6;
+  uint32 locktime = 7;
+  repeated Vin vin = 8;
+  repeated Vout vout = 9;
+  string hex = 10;
+}
+
+message Vin {
+  string txid = 1;
+  uint32 vout = 2;
+  string coinbase = 3;
+  ScriptSig scriptSig = 4;
+  repeated string txinwitness = 5;
+  uint32 sequence = 6;
+}
+
+message ScriptSig {
+  string asm = 1;
+  string hex = 2;
+}
+
+message Vout {
+  double value = 1;
+  uint32 n = 2;
+  ScriptPubKey scriptPubKey = 3;
+}
+
+message ScriptPubKey {
+  string asm = 1;
+  string hex = 2;
+  int32 reqSigs = 3;
+  string type = 4;
+  repeated string addresses = 5;
+}

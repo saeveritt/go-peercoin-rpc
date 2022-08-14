@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto";
+
+message GetBlockChainInfoResult {
+  string  chain = 1 ;
+  int32 blocks = 2;
+  int32 headers = 3;
+  string bestblockhash = 4;
+  double difficulty = 5;
+  int64 mediantime = 6;
+  double verificationprogress = 7;
+  bool initialblockdownload = 8;
+  int64 size_on_disk = 9;
+  bool pruned = 10;
+  int32 pruneheight = 11;
+  string chainwork = 12;
+  SoftForks softforks = 13;
+  string warnings = 14;
+}
+
+message SoftForkDescription {
+  string ID = 1;
+  uint32 Version = 2;
+  Reject Reject = 3;
+}
+
+message Reject {
+  bool Status = 1;
+}
+
+message Bip9SoftForkDescription {
+  string Status = 1;
+  uint32 Bit = 2;
+  int64 StartTime1 = 3;
+  int64 StartTime2 = 4;
+  int64 Timeout = 5;
+  int32 Since = 6;
+
+}
+
+message SoftForks {
+  UnifiedSoftForks bip34 = 1;
+  UnifiedSoftForks bip66 = 2;
+  UnifiedSoftForks bip65 = 3;
+  UnifiedSoftForks csv = 4;
+  UnifiedSoftForks segwit = 5;
+  Regtest taproot = 6;
+  Regtest testdummy = 7;
+}
+
+message UnifiedSoftForks {
+  string type = 1;
+  bool active = 2;
+  int32 height = 3;
+}
+
+message Regtest {
+  bool active = 1;
+  Bip9 bip9 = 2;
+  int32 height = 3;
+  string type = 4;
+}
+
+message Bip9 {
+  int32 since = 1;
+  int32 start_time = 2;
+  string status = 3;
+  int64 timeout = 4;
+}
